@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "dryan",
+      "name": "Dan Ryan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15066?v=4",
+      "profile": "https://dryan.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "infra"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "mnml.css",
+  "projectOwner": "dryan",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
