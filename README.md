@@ -14,7 +14,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://dryan.com"><img src="https://avatars.githubusercontent.com/u/15066?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan Ryan</b></sub></a><br /><<a href="https://github.com/dryan/mnml.css/commits?author=dryan" title="Code">💻</a> <a href="https://github.com/dryan/mnml.css/commits?author=dryan" title="Documentation">📖</a> <a href="#ideas-dryan" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-dryan" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://dryan.com"><img src="https://avatars.githubusercontent.com/u/15066?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan Ryan</b></sub></a><br /><a href="https://github.com/dryan/mnml.css/commits?author=dryan" title="Code">💻</a> <a href="https://github.com/dryan/mnml.css/commits?author=dryan" title="Documentation">📖</a> <a href="#ideas-dryan" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-dryan" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
   </tr>
 </table>
 
