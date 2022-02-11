@@ -1,7 +1,4 @@
-(window as any).mnml = (window as any).mnml || {};
-const mnml = (window as any).mnml;
-
-mnml.parser = new DOMParser();
+export const parser = new DOMParser();
 
 const isInstance = (thing: any, kind: any, param: string): void => {
   if (!(thing instanceof kind)) {
@@ -17,15 +14,16 @@ const isType = (thing: any, kind: string, param: string): void => {
   }
 };
 
-const createElement = (tagName: string): HTMLElement => {
-  if (!createElement[tagName]) {
-    createElement[tagName] = document.createElement(tagName);
-  }
-  return createElement[tagName].cloneNode();
-};
-mnml.createElement = createElement;
+const createElementCache: { [key: string]: HTMLElement } = {};
 
-const createHTML = (content: string): HTMLElement => {
+export const createElement = (tagName: string): HTMLElement => {
+  if (!createElementCache[tagName]) {
+    createElementCache[tagName] = document.createElement(tagName);
+  }
+  return createElementCache[tagName].cloneNode() as HTMLElement;
+};
+
+export const createHTML = (content: string): HTMLElement => {
   const template = createElement("template") as HTMLTemplateElement;
   isInstance(template, HTMLTemplateElement, "template");
   template.innerHTML = content.trim();
@@ -33,30 +31,33 @@ const createHTML = (content: string): HTMLElement => {
   isInstance(output, HTMLElement, "output");
   return output;
 };
-mnml.createHTML = createHTML;
 
-const find = (elem: HTMLElement | string, selector: string): HTMLElement => {
+export const find = (
+  elem: HTMLElement | string,
+  selector: string
+): HTMLElement | null => {
   if (typeof elem === "string") {
     selector = elem;
     elem = document.documentElement;
   }
   return elem.querySelector(selector);
 };
-mnml.find = find;
 
-const findAll = (elem: HTMLElement | string, selector: string): HTMLElement[] => {
+export const findAll = (
+  elem: HTMLElement | string,
+  selector: string
+): HTMLElement[] => {
   if (typeof elem === "string") {
     selector = elem;
     elem = document.documentElement as HTMLElement;
   }
   return [...elem.querySelectorAll(selector)].map((elem) => elem as HTMLElement);
 };
-mnml.find = findAll;
 
-const findParent = (elem: HTMLElement, selector: string): HTMLElement => {
+export const findParent = (elem: HTMLElement, selector: string): HTMLElement | null => {
   let parent = elem.parentElement;
-  if (!parent.matches) {
-    return;
+  if (!parent || !parent.matches) {
+    return null;
   }
   while (!parent.matches(selector)) {
     parent = parent.parentElement;
@@ -67,21 +68,19 @@ const findParent = (elem: HTMLElement, selector: string): HTMLElement => {
   }
   return parent;
 };
-mnml.findParent = findParent;
 
-const findParents = (elem: HTMLElement, selector: string): HTMLElement[] => {
+export const findParents = (elem: HTMLElement, selector: string): HTMLElement[] => {
   const parents = [];
-  let parent = elem;
+  let parent: HTMLElement | null = elem;
   while ((parent = parent.parentElement)) {
-    if (parent.matches && parent.matches(selector)) {
+    if (parent && parent.matches && parent.matches(selector)) {
       parents.push(parent);
     }
   }
   return parents;
 };
-mnml.findParents = findParents;
 
-const _findEventTarget = (ev: Event, selector: string): HTMLElement => {
+export const _findEventTarget = (ev: Event, selector: string): HTMLElement => {
   return (ev.composedPath &&
     ev
       .composedPath()
@@ -92,7 +91,7 @@ const _findEventTarget = (ev: Event, selector: string): HTMLElement => {
       .shift()) as HTMLElement;
 };
 
-type EventCallback = (ev?: Event, match?: HTMLElement) => void;
+export type EventCallback = (ev?: Event, match?: HTMLElement) => void;
 
 const _loadListener = (callback: EventCallback, priority?: number): any => {
   priority = priority || 10;
@@ -106,7 +105,10 @@ _loadListener.loaded = false;
 window.addEventListener("load", () => {
   _loadListener.queue = _loadListener.queue.sort((a, b) => a[1] - b[1]);
   while (_loadListener.queue.length) {
-    _loadListener.queue.shift()[0]();
+    const cb = _loadListener.queue.shift();
+    if (cb) {
+      cb[0]();
+    }
   }
   _loadListener.loaded = true;
 });
@@ -123,12 +125,15 @@ _readyListener.loaded = false;
 document.addEventListener("DOMContentLoaded", () => {
   _readyListener.queue = _readyListener.queue.sort((a, b) => a[1] - b[1]);
   while (_readyListener.queue.length) {
-    _readyListener.queue.shift()[0]();
+    const cb = _readyListener.queue.shift();
+    if (cb) {
+      cb[0]();
+    }
   }
   _readyListener.loaded = true;
 });
 
-const listen = (
+export const listen = (
   eventName: string,
   selector: string | number | EventCallback,
   callback: EventCallback,
@@ -171,17 +176,17 @@ const listen = (
   }
 
   if (typeof listen.cache[eventName] === "undefined") {
-    listen.cache[eventName] = {};
+    listen.cache[eventName] = {} as { [key: string]: EventCallback[] };
   }
 
   if (!(selector in (listen.cache[eventName] as object))) {
-    (listen.cache[eventName] as object)[selector] = [];
+    listen.cache[eventName][selector] = [];
   }
   if (replace) {
-    (listen.cache[eventName] as object)[selector] = [];
+    listen.cache[eventName][selector] = [];
   }
 
-  (listen.cache[eventName] as object)[selector].push(callback);
+  listen.cache[eventName][selector].push(callback);
 
   if (listen.registeredEvents.indexOf(eventName) === -1) {
     listen.registeredEvents.push(eventName);
@@ -190,7 +195,7 @@ const listen = (
       Object.keys(listen.cache[eventName]).map((s) => {
         const match = _findEventTarget(ev, s);
         if (match) {
-          (listen.cache[eventName] as object)[s].map((cb: EventCallback) => {
+          listen.cache[eventName][s].map((cb: EventCallback) => {
             cb(ev, match);
           });
         }
@@ -198,9 +203,8 @@ const listen = (
     });
   }
 };
-listen.cache = {};
-listen.registeredEvents = [] as Array<string>;
-mnml.listen = listen;
+listen.cache = {} as { [key: string]: { [key: string]: EventCallback[] } };
+listen.registeredEvents = [] as string[];
 
 const uuid = (): string => {
   return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: string) =>
@@ -210,9 +214,12 @@ const uuid = (): string => {
     ).toString(16)
   );
 };
-mnml.uuid = uuid;
 
-const params = (str: string = document.location.search): object => {
+export interface ParamsObject {
+  [key: string]: string | string[];
+}
+
+export const params = (str: string = document.location.search): ParamsObject => {
   str = str.replace(/(^\?)/, "");
   if (!str) {
     return {};
@@ -220,19 +227,34 @@ const params = (str: string = document.location.search): object => {
     return params.cache[str];
   }
   const _params = new URLSearchParams(str);
-  const obj = {};
+  const obj: ParamsObject = {};
   [..._params.entries()].map((entry) => {
     const [key, value] = entry;
-    if (obj.hasOwnProperty(key) && !(obj[key] instanceof Array)) {
-      obj[key] = [obj[key]];
+    if (Object.keys(obj).includes(key) && !Array.isArray(obj[key])) {
+      // if there's already a property here and the value isn't an array, make it one
+      obj[key] = [obj[key] as string] as string[];
     }
-    if (obj[key] instanceof Array) {
-      obj[key].push(value);
+    if (Array.isArray(obj[key])) {
+      (obj[key] as string[]).push(value);
     } else {
-      obj[key] = value;
+      obj[key] = value as string;
     }
   });
   return obj;
 };
-params.cache = {};
-mnml.params = params;
+params.cache = {} as { [key: string]: any };
+
+export default {
+  mnml: {
+    parser,
+    createElement,
+    createHTML,
+    find,
+    findAll,
+    findParent,
+    findParents,
+    listen,
+    uuid,
+    params,
+  },
+};

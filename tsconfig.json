@@ -1,0 +1,24 @@
+{
+  // Note: This config is only used to help editors like VS Code understand/resolve
+  // parts, the actual transpilation is done by babel. Any compiler configuration in
+  // here will be ignored.
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
+  "compilerOptions": {
+    "declaration": true,
+    "downlevelIteration": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "lib": ["dom", "DOM.Iterable", "esnext"],
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext"
+  }
+}

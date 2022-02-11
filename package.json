@@ -5,16 +5,17 @@
   "main": "dist/mnml.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "clean": "rm -rf dist/*",
+    "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "./build.js",
+    "build": "tsc --project tsconfig.json",
+    "watch": "npm run build -- --watch",
     "prepublish": "npm run build"
   },
   "author": "dryan <dryan@users.noreply.github.com>",
   "license": "MPL",
   "devDependencies": {
-    "browserslist": "^4.16.8",
-    "esbuild": "^0.12.21"
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.5"
   },
   "files": [
     "dist/**/*"
