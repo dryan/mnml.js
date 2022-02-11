@@ -140,8 +140,7 @@ export const mnml = (() => {
   ): void;
   function listen(
     eventName: "unload" | "beforeunload",
-    selector: MnmlEventCallback,
-    callback: undefined
+    selector: MnmlEventCallback
   ): void;
   function listen(
     eventName: string,
@@ -152,9 +151,13 @@ export const mnml = (() => {
   function listen(
     eventName: string,
     selector: string | number | MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
-    callback: MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
-    replace: boolean = true
+    callback?: MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
+    replace?: boolean
   ): void {
+    if (typeof replace === "undefined") {
+      replace = true;
+    }
+
     if (eventName === "load") {
       if (typeof selector === "function") {
         return _loadListener(selector);
