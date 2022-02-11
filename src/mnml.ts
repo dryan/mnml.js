@@ -1,4 +1,5 @@
-export type EventCallback = (ev?: Event, match?: HTMLElement) => void;
+export type MnmlEventCallback = (ev?: Event, match?: HTMLElement) => void;
+export type MnmlEventCallbackGuaranteedParams = (ev: Event, match: HTMLElement) => void;
 
 export interface ParamsObject {
   [key: string]: string | string[];
@@ -92,14 +93,14 @@ export const mnml = (() => {
         .shift()) as HTMLElement;
   };
 
-  const _loadListener = (callback: EventCallback, priority?: number): any => {
+  const _loadListener = (callback: MnmlEventCallback, priority?: number): any => {
     priority = priority || 10;
     if (_loadListener.loaded) {
       return callback();
     }
     _loadListener.queue.push([callback, priority]);
   };
-  _loadListener.queue = [] as Array<[EventCallback, number]>;
+  _loadListener.queue = [] as Array<[MnmlEventCallback, number]>;
   _loadListener.loaded = false;
   window.addEventListener("load", () => {
     _loadListener.queue = _loadListener.queue.sort((a, b) => a[1] - b[1]);
@@ -112,14 +113,14 @@ export const mnml = (() => {
     _loadListener.loaded = true;
   });
 
-  const _readyListener = (callback: EventCallback, priority?: number): any => {
+  const _readyListener = (callback: MnmlEventCallback, priority?: number): any => {
     priority = priority || 10;
     if (_readyListener.loaded) {
       return callback();
     }
     _readyListener.queue.push([callback, priority]);
   };
-  _readyListener.queue = [] as Array<[EventCallback, number]>;
+  _readyListener.queue = [] as Array<[MnmlEventCallback, number]>;
   _readyListener.loaded = false;
   document.addEventListener("DOMContentLoaded", () => {
     _readyListener.queue = _readyListener.queue.sort((a, b) => a[1] - b[1]);
@@ -132,12 +133,28 @@ export const mnml = (() => {
     _readyListener.loaded = true;
   });
 
-  const listen = (
+  function listen(
+    eventName: "load",
+    selector: number | MnmlEventCallback,
+    callback: MnmlEventCallback
+  ): void;
+  function listen(
+    eventName: "ready",
+    selector: number | MnmlEventCallback,
+    callback: MnmlEventCallback
+  ): void;
+  function listen(
     eventName: string,
-    selector: string | number | EventCallback,
-    callback: EventCallback,
+    selector: string,
+    callback: MnmlEventCallbackGuaranteedParams,
+    replace?: boolean
+  ): void;
+  function listen(
+    eventName: string,
+    selector: string | number | MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
+    callback: MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
     replace: boolean = true
-  ): void => {
+  ): void {
     if (eventName === "load") {
       if (typeof selector === "function") {
         return _loadListener(selector);
@@ -149,7 +166,8 @@ export const mnml = (() => {
           }`
         );
       }
-      return _loadListener(callback, selector);
+      const _cb = callback as MnmlEventCallback;
+      return _loadListener(_cb, selector);
     }
 
     if (eventName === "ready") {
@@ -163,7 +181,8 @@ export const mnml = (() => {
           }`
         );
       }
-      return _readyListener(callback, selector);
+      const _cb = callback as MnmlEventCallback;
+      return _readyListener(_cb, selector);
     }
 
     if (typeof selector !== "string") {
@@ -174,8 +193,10 @@ export const mnml = (() => {
       );
     }
 
+    const _cb = callback as MnmlEventCallbackGuaranteedParams;
+
     if (typeof listen.cache[eventName] === "undefined") {
-      listen.cache[eventName] = {} as { [key: string]: EventCallback[] };
+      listen.cache[eventName] = {} as { [key: string]: MnmlEventCallback[] };
     }
 
     if (!(selector in (listen.cache[eventName] as object))) {
@@ -185,7 +206,7 @@ export const mnml = (() => {
       listen.cache[eventName][selector] = [];
     }
 
-    listen.cache[eventName][selector].push(callback);
+    listen.cache[eventName][selector].push(_cb);
 
     if (listen.registeredEvents.indexOf(eventName) === -1) {
       listen.registeredEvents.push(eventName);
@@ -194,15 +215,15 @@ export const mnml = (() => {
         Object.keys(listen.cache[eventName]).map((s) => {
           const match = _findEventTarget(ev, s);
           if (match) {
-            listen.cache[eventName][s].map((cb: EventCallback) => {
+            listen.cache[eventName][s].map((cb: MnmlEventCallbackGuaranteedParams) => {
               cb(ev, match);
             });
           }
         });
       });
     }
-  };
-  listen.cache = {} as { [key: string]: { [key: string]: EventCallback[] } };
+  }
+  listen.cache = {} as { [key: string]: { [key: string]: MnmlEventCallback[] } };
   listen.registeredEvents = [] as string[];
 
   const uuid = (): string => {
