@@ -134,14 +134,14 @@ export const mnml = (() => {
   });
 
   function listen(
-    eventName: "load",
+    eventName: "load" | "ready",
     selector: number | MnmlEventCallback,
     callback: MnmlEventCallback
   ): void;
   function listen(
-    eventName: "ready",
-    selector: number | MnmlEventCallback,
-    callback: MnmlEventCallback
+    eventName: "unload" | "beforeunload",
+    selector: MnmlEventCallback,
+    callback: undefined
   ): void;
   function listen(
     eventName: string,
@@ -183,6 +183,14 @@ export const mnml = (() => {
       }
       const _cb = callback as MnmlEventCallback;
       return _readyListener(_cb, selector);
+    }
+
+    if (["unload", "beforeunload"].includes(eventName)) {
+      if (typeof selector === "function") {
+        const _cb = selector as MnmlEventCallback;
+        window.addEventListener(eventName, _cb);
+        return;
+      }
     }
 
     if (typeof selector !== "string") {
