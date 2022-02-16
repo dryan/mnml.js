@@ -162,15 +162,10 @@ export const mnml = (() => {
       if (typeof selector === "function") {
         return _loadListener(selector);
       }
-      if (typeof selector !== "number") {
-        throw new Error(
-          `Expected selector to be a number but was ${
-            (selector && selector.constructor && selector.constructor.name) || selector
-          }`
-        );
+      if (typeof selector === "number") {
+        const _cb = callback as MnmlEventCallback;
+        return _loadListener(_cb, selector);
       }
-      const _cb = callback as MnmlEventCallback;
-      return _loadListener(_cb, selector);
     }
 
     if (eventName === "ready") {
