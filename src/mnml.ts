@@ -133,27 +133,26 @@ export const mnml = (() => {
     _readyListener.loaded = true;
   });
 
-  function listen(
-    eventName: "load" | "ready",
-    selector: number | MnmlEventCallback,
-    callback: MnmlEventCallback
-  ): void;
-  function listen(
-    eventName: "unload" | "beforeunload",
-    selector: MnmlEventCallback
-  ): void;
-  function listen(
-    eventName: string,
-    selector: string,
-    callback: MnmlEventCallbackGuaranteedParams,
-    replace?: boolean
-  ): void;
-  function listen(
+  type MnmlListenMethod =
+    | ((
+        eventName: "load" | "ready",
+        selector: number | MnmlEventCallback,
+        callback?: MnmlEventCallback
+      ) => void)
+    | ((eventName: "unload" | "beforeunload", selector: MnmlEventCallback) => void)
+    | ((
+        eventName: string,
+        selector: string,
+        callback: MnmlEventCallbackGuaranteedParams,
+        replace?: boolean
+      ) => void);
+
+  const listen: MnmlListenMethod = (
     eventName: string,
     selector: string | number | MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
     callback?: MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
     replace?: boolean
-  ): void {
+  ): void => {
     if (typeof replace === "undefined") {
       replace = true;
     }
@@ -201,36 +200,36 @@ export const mnml = (() => {
 
     const _cb = callback as MnmlEventCallbackGuaranteedParams;
 
-    if (typeof listen.cache[eventName] === "undefined") {
-      listen.cache[eventName] = {} as { [key: string]: MnmlEventCallback[] };
+    if (typeof listenCache[eventName] === "undefined") {
+      listenCache[eventName] = {} as { [key: string]: MnmlEventCallback[] };
     }
 
-    if (!(selector in (listen.cache[eventName] as object))) {
-      listen.cache[eventName][selector] = [];
+    if (!(selector in (listenCache[eventName] as object))) {
+      listenCache[eventName][selector] = [];
     }
     if (replace) {
-      listen.cache[eventName][selector] = [];
+      listenCache[eventName][selector] = [];
     }
 
-    listen.cache[eventName][selector].push(_cb);
+    listenCache[eventName][selector].push(_cb);
 
-    if (listen.registeredEvents.indexOf(eventName) === -1) {
-      listen.registeredEvents.push(eventName);
+    if (listenRegisteredEvents.indexOf(eventName) === -1) {
+      listenRegisteredEvents.push(eventName);
 
       document.addEventListener(eventName, (ev) => {
-        Object.keys(listen.cache[eventName]).map((s) => {
+        Object.keys(listenCache[eventName]).map((s) => {
           const match = _findEventTarget(ev, s);
           if (match) {
-            listen.cache[eventName][s].map((cb: MnmlEventCallbackGuaranteedParams) => {
+            listenCache[eventName][s].map((cb: MnmlEventCallbackGuaranteedParams) => {
               cb(ev, match);
             });
           }
         });
       });
     }
-  }
-  listen.cache = {} as { [key: string]: { [key: string]: MnmlEventCallback[] } };
-  listen.registeredEvents = [] as string[];
+  };
+  const listenCache = {} as { [key: string]: { [key: string]: MnmlEventCallback[] } };
+  const listenRegisteredEvents = [] as string[];
 
   const uuid = (): string => {
     return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: string) =>
