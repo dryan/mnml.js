@@ -133,26 +133,27 @@ export const mnml = (() => {
     _readyListener.loaded = true;
   });
 
-  type MnmlListenMethod =
-    | ((
-        eventName: "load" | "ready",
-        selector: number | MnmlEventCallback,
-        callback?: MnmlEventCallback
-      ) => void)
-    | ((eventName: "unload" | "beforeunload", selector: MnmlEventCallback) => void)
-    | ((
-        eventName: string,
-        selector: string,
-        callback: MnmlEventCallbackGuaranteedParams,
-        replace?: boolean
-      ) => void);
-
-  const listen: MnmlListenMethod = (
+  function listen(
+    eventName: "unload" | "beforeunload",
+    selector: MnmlEventCallback
+  ): void;
+  function listen(
+    eventName: "load" | "ready",
+    selector: number | MnmlEventCallback,
+    callback?: MnmlEventCallback
+  ): void;
+  function listen(
+    eventName: string,
+    selector: string,
+    callback: MnmlEventCallbackGuaranteedParams,
+    replace?: boolean
+  ): void;
+  function listen(
     eventName: string,
     selector: string | number | MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
     callback?: MnmlEventCallback | MnmlEventCallbackGuaranteedParams,
     replace?: boolean
-  ): void => {
+  ): void {
     if (typeof replace === "undefined") {
       replace = true;
     }
@@ -227,7 +228,7 @@ export const mnml = (() => {
         });
       });
     }
-  };
+  }
   const listenCache = {} as { [key: string]: { [key: string]: MnmlEventCallback[] } };
   const listenRegisteredEvents = [] as string[];
 
