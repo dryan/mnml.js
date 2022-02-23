@@ -44,7 +44,7 @@ export const mnml = (() => {
     return createHTML(
       strings
         .map((str, index) => {
-          return str + (values[index] || "");
+          return str + (typeof values[index] === "undefined" ? "" : values[index]);
         })
         .join("")
     );
