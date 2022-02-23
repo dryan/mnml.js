@@ -40,6 +40,16 @@ export const mnml = (() => {
     return output;
   };
 
+  const html = (strings: TemplateStringsArray, ...values): HTMLElement => {
+    return createHTML(
+      strings
+        .map((str, index) => {
+          return str + (values[index] || "");
+        })
+        .join("")
+    );
+  };
+
   const find = (elem: HTMLElement | string, selector: string): HTMLElement | null => {
     if (typeof elem === "string") {
       selector = elem;
@@ -274,6 +284,7 @@ export const mnml = (() => {
     findAll,
     findParent,
     findParents,
+    html,
     listen,
     uuid,
     params,
