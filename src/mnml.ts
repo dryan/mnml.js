@@ -276,6 +276,14 @@ export const mnml = (() => {
   };
   params.cache = {} as { [key: string]: any };
 
+  const any = (things: any[]): boolean => {
+    return things.filter((thing) => !!thing).length > 0;
+  };
+
+  const all = (things: any[]): boolean => {
+    return things.filter((thing) => !!thing).length === things.length;
+  };
+
   return {
     parser,
     createElement,
@@ -288,6 +296,8 @@ export const mnml = (() => {
     listen,
     uuid,
     params,
+    any,
+    all,
   };
 })();
 
