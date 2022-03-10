@@ -40,7 +40,7 @@ export const mnml = (() => {
     return output;
   };
 
-  const html = (strings: TemplateStringsArray, ...values): HTMLElement => {
+  const html = (strings: TemplateStringsArray, ...values: any[]): HTMLElement => {
     return createHTML(
       strings
         .map((str, index) => {
