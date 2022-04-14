@@ -1,6 +1,7 @@
 {
   "name": "@dryan-llc/mnml.js",
   "version": "1.4.0",
+  "type": "module",
   "description": "",
   "main": "dist/mnml.js",
   "types": "dist/mnml.d.ts",
