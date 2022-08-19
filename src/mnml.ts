@@ -83,7 +83,7 @@ export const mnml = (() => {
     return elem.closest(selector) || null;
   };
 
-  const findParents = (elem: HTMLElement, selector: string): HTMLElement[] => {
+  const findParents = (elem: HTMLElement, selector: string = "*"): HTMLElement[] => {
     const parents = [];
     let parent: HTMLElement | null = elem;
     while ((parent = parent.parentElement)) {
