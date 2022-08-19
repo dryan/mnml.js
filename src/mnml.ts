@@ -52,6 +52,17 @@ export const mnml = (() => {
     );
   };
 
+  const text = (strings: TemplateStringsArray, ...values: any[]): Text => {
+    const text = document.createTextNode(
+      strings
+        .map((str, index) => {
+          return str + (typeof values[index] === "undefined" ? "" : values[index]);
+        })
+        .join("")
+    );
+    return text;
+  };
+
   const find = (elem: HTMLElement | string, selector: string): HTMLElement | null => {
     if (typeof elem === "string") {
       selector = elem;
