@@ -80,18 +80,7 @@ export const mnml = (() => {
   };
 
   const findParent = (elem: HTMLElement, selector: string): HTMLElement | null => {
-    let parent = elem.parentElement;
-    if (!parent || !parent.matches) {
-      return null;
-    }
-    while (!parent.matches(selector)) {
-      parent = parent.parentElement;
-      if (!parent || !parent.matches) {
-        parent = null;
-        break;
-      }
-    }
-    return parent;
+    return elem.closest(selector) || null;
   };
 
   const findParents = (elem: HTMLElement, selector: string): HTMLElement[] => {
