@@ -11,7 +11,9 @@ export const mnml = (() => {
   const isInstance = (thing: any, kind: any, param: string): void => {
     if (!(thing instanceof kind)) {
       throw new Error(
-        `Expected ${param} to be a ${kind && kind.constructor && kind.constructor.name}`
+        `Expected ${param} to be a ${
+          kind && (kind.name || (kind.constructor && kind.constructor.name))
+        }`
       );
     }
   };
