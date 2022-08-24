@@ -302,13 +302,3 @@ export const mnml = (() => {
 })();
 
 export default mnml;
-
-declare global {
-  interface Window {
-    mnml: typeof mnml;
-  }
-}
-
-if (window) {
-  window.mnml = mnml;
-}
