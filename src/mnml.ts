@@ -297,6 +297,7 @@ export const mnml = (() => {
     params,
     any,
     all,
+    text,
   };
 })();
 
