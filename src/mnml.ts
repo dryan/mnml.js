@@ -6,8 +6,6 @@ export interface ParamsObject {
 }
 
 export const mnml = (() => {
-  const parser = new DOMParser();
-
   const isInstance = (thing: any, kind: any, param: string): void => {
     if (!(thing instanceof kind)) {
       throw new Error(
@@ -287,7 +285,6 @@ export const mnml = (() => {
   };
 
   return {
-    parser,
     createElement,
     createHTML,
     find,
