@@ -10,7 +10,7 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "tsc --project tsconfig.json && uglifyjs dist/mnml.js -o dist/mnml.min.js --compress --comments --source-map \"url=mnml.min.js.map,includeSources\"",
-    "postbuild": "MNML_VERSION=$(node -pe \"require('./package.json').version\") && cat dist/mnml.js | sed -E \"s/@version$/@version $MNML_VERSION/g\" | tee dist/mnml.js > /dev/null",
+    "postbuild": "MNML_VERSION=$(node -pe \"require('./package.json').version\") && cat dist/mnml.js | sed -E \"s/@version/@version $MNML_VERSION/g\" | tee dist/mnml.js > /dev/null && cat dist/mnml.min.js | sed -E \"s/@version/@version $MNML_VERSION/g\" | tee dist/mnml.min.js > /dev/null",
     "watch": "npm run build -- --watch",
     "prepublish": "npm run build"
   },

@@ -297,6 +297,7 @@ export const mnml = (() => {
   };
 
   return {
+    __version__: "@version",
     createElement,
     createHTML,
     find,
