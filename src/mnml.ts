@@ -1,3 +1,9 @@
+/*
+ * 🛠️  mnml.js
+ * @version
+ * @license MPL-2.0
+ */
+
 export type MnmlEventCallback = (ev?: Event, match?: HTMLElement) => void;
 export type MnmlEventCallbackGuaranteedParams = (ev: Event, match: HTMLElement) => void;
 

@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && uglifyjs dist/mnml.js -o dist/mnml.min.js --compress --comments --source-map \"url=mnml.min.js.map,includeSources\"",
+    "postbuild": "MNML_VERSION=$(node -pe \"require('./package.json').version\") && cat dist/mnml.js | sed -E \"s/@version$/@version $MNML_VERSION/g\" | tee dist/mnml.js > /dev/null",
     "watch": "npm run build -- --watch",
     "prepublish": "npm run build"
   },
@@ -17,7 +18,8 @@
   "license": "MPL",
   "devDependencies": {
     "rimraf": "^3.0.2",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "uglify-js": "^3.17.4"
   },
   "files": [
     "dist/**/*"
