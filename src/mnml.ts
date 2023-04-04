@@ -114,7 +114,7 @@ export const mnml = (() => {
   };
   _loadListener.queue = [] as Array<[MnmlEventCallback, number]>;
   _loadListener.loaded = false;
-  if (window) {
+  if (typeof window !== "undefined") {
     window.addEventListener("load", () => {
       _loadListener.queue = _loadListener.queue.sort((a, b) => a[1] - b[1]);
       while (_loadListener.queue.length) {
@@ -200,7 +200,7 @@ export const mnml = (() => {
     if (["unload", "beforeunload"].includes(eventName)) {
       if (typeof selector === "function") {
         const _cb = selector as MnmlEventCallback;
-        if (window) {
+        if (typeof window !== "undefined") {
           window.addEventListener(eventName, _cb);
         }
         return;
