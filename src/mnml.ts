@@ -283,11 +283,11 @@ export const mnml = (() => {
   params.cache = {} as { [key: string]: any };
 
   const any = (things: any[]): boolean => {
-    return things.filter((thing) => !!thing).length > 0;
+    return things.some((thing) => !!thing);
   };
 
   const all = (things: any[]): boolean => {
-    return things.filter((thing) => !!thing).length === things.length;
+    return things.every((thing) => !!thing);
   };
 
   return {
