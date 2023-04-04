@@ -6,20 +6,22 @@ export interface ParamsObject {
 }
 
 export const mnml = (() => {
-  const isInstance = (thing: any, kind: any, param: string): void => {
-    if (!(thing instanceof kind)) {
+  const isInstance = (thing: any, kind: any, param: string): boolean => {
+    if (Array.isArray(kind)) {
+      if (kind.find((k) => thing instanceof k)) {
+        return true;
+      }
+      throw new Error(
+        `Expected ${param} to be one of ${kind.map((k) => k.name).join(", ")}`
+      );
+    } else if (!(thing instanceof kind)) {
       throw new Error(
         `Expected ${param} to be a ${
           kind && (kind.name || (kind.constructor && kind.constructor.name))
         }`
       );
     }
-  };
-
-  const isType = (thing: any, kind: string, param: string): void => {
-    if (typeof thing !== kind) {
-      throw new Error(`Expected ${param} to be a ${kind}`);
-    }
+    return true;
   };
 
   const createElementCache: { [key: string]: HTMLElement } = {};
@@ -31,16 +33,16 @@ export const mnml = (() => {
     return createElementCache[tagName].cloneNode() as HTMLElement;
   };
 
-  const createHTML = (content: string): HTMLElement => {
+  const createHTML = (content: string): DocumentFragment => {
     const template = createElement("template") as HTMLTemplateElement;
     isInstance(template, HTMLTemplateElement, "template");
     template.innerHTML = content.trim();
-    const output = template.content.firstChild as HTMLElement;
-    isInstance(output, HTMLElement, "output");
+    const output = template.content;
+    isInstance(output, DocumentFragment, "output");
     return output;
   };
 
-  const html = (strings: TemplateStringsArray, ...values: any[]): HTMLElement => {
+  const html = (strings: TemplateStringsArray, ...values: any[]): DocumentFragment => {
     return createHTML(
       strings
         .map((str, index) => {
