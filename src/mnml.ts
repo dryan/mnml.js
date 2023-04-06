@@ -135,13 +135,12 @@ export const mnml = (() => {
 
   const _readyListener = (callback: MnmlEventCallback, priority?: number): any => {
     priority = priority || 10;
-    if (_readyListener.loaded) {
-      return callback();
+    if (document.readyState === "loading") {
+      return _readyListener.queue.push([callback, priority]);
     }
-    _readyListener.queue.push([callback, priority]);
+    return callback();
   };
   _readyListener.queue = [] as Array<[MnmlEventCallback, number]>;
-  _readyListener.loaded = false;
   document.addEventListener("DOMContentLoaded", () => {
     _readyListener.queue = _readyListener.queue.sort((a, b) => a[1] - b[1]);
     while (_readyListener.queue.length) {
@@ -150,7 +149,6 @@ export const mnml = (() => {
         cb[0]();
       }
     }
-    _readyListener.loaded = true;
   });
 
   function listen(
