@@ -36,7 +36,7 @@ export const mnml = (() => {
     if (!createElementCache[tagName]) {
       createElementCache[tagName] = document.createElement(tagName);
     }
-    return createElementCache[tagName].cloneNode() as HTMLElement;
+    return createElementCache[tagName].cloneNode(true) as HTMLElement;
   };
 
   const createHTML = (content: string): DocumentFragment => {
